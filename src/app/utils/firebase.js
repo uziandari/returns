@@ -6,7 +6,6 @@ export const firebaseAuth = firebaseApp.auth();
 export const firebaseDb = firebaseApp.database();
 
 const FireBaseTools = {
-
   /**
    * Return an instance of a firebase auth provider based on the provider string.
    *
@@ -17,14 +16,6 @@ const FireBaseTools = {
         switch (provider) {
         case 'email':
             return new firebase.auth.EmailAuthProvider();
-        case 'facebook':
-            return new firebase.auth.FacebookAuthProvider();
-        case 'github':
-            return new firebase.auth.GithubAuthProvider();
-        case 'google':
-            return new firebase.auth.GoogleAuthProvider();
-        case 'twitter':
-            return new firebase.auth.TwitterAuthProvider();
         default:
             throw new Error('Provider is not supported!!!');
         }
@@ -44,12 +35,12 @@ const FireBaseTools = {
         }));
     },
 
-  /**
+  /*
    * Register a user with email and password
    *
    * @param user
    * @returns {any|!firebase.Thenable.<*>|firebase.Thenable<any>}
-   */
+   
     registerUser: user => firebaseAuth.createUserWithEmailAndPassword(user.email, user.password)
         .then(userInfo => userInfo)
         .catch(error => ({

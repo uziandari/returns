@@ -1,6 +1,5 @@
 import {
   LOGIN_WITH_PROVIDER_FIREBASE,
-  REGISTER_FIREBASE_USER,
   LOGIN_FIREBASE_USER,
   FETCH_FIREBASE_USER,
   UPDATE_FIREBASE_USER,
@@ -15,8 +14,6 @@ export default function (state = null, action) {
     case FETCH_FIREBASE_USER:
         return action.payload;
     case LOGOUT_FIREBASE_USER:
-        return action.payload;
-    case REGISTER_FIREBASE_USER:
         return action.payload;
     case LOGIN_FIREBASE_USER:
         return action.payload;

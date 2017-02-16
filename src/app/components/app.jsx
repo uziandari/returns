@@ -31,6 +31,8 @@ class App extends Component {
                     >
                         {currentUser.email} <span className="caret" /></a>
                     <ul className="dropdown-menu">
+                        <li><Link to="/return">Add Returns</Link></li>
+                        <li role="separator" className="divider" />
                         <li><Link to="/profile">Profile</Link></li>
                         <li role="separator" className="divider" />
                         <li><Link to="/logout" onClick={this.logOut}>Logout</Link></li>
@@ -39,8 +41,7 @@ class App extends Component {
             );
         } else {
             return [
-                <li key={1}><Link to="/login">Login</Link></li>,
-                <li key={2}><Link to="/register">Register</Link></li>,
+                <li key={1}><Link to="/login">Login</Link></li>
             ];
         }
     }
@@ -59,14 +60,10 @@ class App extends Component {
                                 <span className="icon-bar" />
                                 <span className="icon-bar" />
                             </button>
-                            <Link to="/" className="navbar-brand">Firebase & Redux boilerplate</Link>
+                            <Link to="/" className="navbar-brand">ReturnInv</Link>
 
                         </div>
                         <nav className="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-                            <ul className="nav navbar-nav">
-                                <li><Link to="/"> Home</Link></li>
-                ,
-              </ul>
                             <ul className="nav navbar-nav navbar-right">
                                 { this.renderUserMenu(this.props.currentUser) }
                             </ul>
