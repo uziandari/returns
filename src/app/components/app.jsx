@@ -31,7 +31,7 @@ class App extends Component {
                     >
                         {currentUser.email} <span className="caret" /></a>
                     <ul className="dropdown-menu">
-                        <li><Link to="/return">Add Returns</Link></li>
+                        <li><Link to="/submitreturn">Add Returns</Link></li>
                         <li role="separator" className="divider" />
                         <li><Link to="/profile">Profile</Link></li>
                         <li role="separator" className="divider" />

@@ -9,7 +9,8 @@ import UserProfile from './components/user/profile';
 import ResetPassword from './components/user/reset_password';
 import requireAuth from './utils/authenticated';
 
-import ReturnInventory from './components/inventory/Returns';
+import ReturnForm from './components/returns/ReturnForm/index';
+import ReturnInventory from './components/returns/ReturnInventory/index';
 
 export default (
     <Route path="/" component={App}>
@@ -18,7 +19,7 @@ export default (
         <Route path="/logout" component={UserLogout} />
         <Route path="/reset" component={ResetPassword} />
         <Route path="/profile" component={UserProfile} onEnter={requireAuth} />
-        <Route path="/return" component={ReturnInventory} onEnter={requireAuth} />
+        <Route path="/submitreturn" component={ReturnForm} onEnter={requireAuth} />
     </Route>
 
 );
