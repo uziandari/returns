@@ -20,6 +20,7 @@ export default (
         <Route path="/reset" component={ResetPassword} />
         <Route path="/profile" component={UserProfile} onEnter={requireAuth} />
         <Route path="/submitreturn" component={ReturnForm} onEnter={requireAuth} />
+        <Route path="/viewreturns" component={ReturnInventory} onEnter={requireAuth} />
     </Route>
 
 );

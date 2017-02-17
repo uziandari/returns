@@ -55,8 +55,9 @@ export default class ReturnForm extends Component {
       return;
     }
     event.preventDefault();
+    let timestamp = new Date().getTime();
     this.firebaseRef.push({
-      date: new Date(),
+      entryDate: timestamp,
       trackingNumber: this.state.trackingNumber,
       orderNumber: this.state.orderNumber,
       returnCode: this.state.returnCode,

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import firebase from 'firebase';
 
-import ReturnList from '../ReturnTable/index';
+import ReturnTable from '../ReturnTable/index';
 
 export default class ReturnInventory extends Component {
   constructor() {
@@ -20,11 +20,12 @@ export default class ReturnInventory extends Component {
   }
 
   componentDidMount() {
-    this.firebaseRef.on('value', (dataSnapshot) => {
+    this.firebaseRef.orderByChild('entryDate').on('value', (dataSnapshot) => {
       let returns = [];
         dataSnapshot.forEach((child) => {
           returns.push(child.val());
         })
+      returns.reverse();
       this.setState({
         items: returns
       });
@@ -55,7 +56,7 @@ export default class ReturnInventory extends Component {
           <input className="form-control" placeholder="Search Returns..." type="text" value={this.state.value} onChange={this.handleChange} />
           </form>
         </div>
-        < ReturnList items={this.state.items} />
+        < ReturnTable items={this.state.items} />
       </div>        
     )
   }

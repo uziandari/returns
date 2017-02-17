@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export default class ReturnsList extends Component {
+export default class ReturnTable extends Component {
   constructor(props) {
     super(props);
   }
@@ -10,17 +10,31 @@ export default class ReturnsList extends Component {
 
     var itemsNode = this.props.items.map((item, index) => {
       return (
-        <div key={index}>
-          <h3>{item.trackingNumber}</h3>
-          <p>{item.orderNumber}</p>
-        </div>
+        <tr key={index}>
+          <td>{item.entryDate}</td>
+          <td>{item.returnCode}-{item.orderNumber}</td>
+          <td>{item.trackingNumber}</td>
+          <td>{item.noRestockReason}</td>
+          <td>{item.additionalNotes}</td>
+        </tr>
       );
     }); 
 
     return (
-      <div>
-        {itemsNode}
-      </div>
+      <table className="table table-condensed table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Order#</th>
+            <th>Tracking#</th>
+            <th>No Restock</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {itemsNode}
+        </tbody>
+      </table>
     );
   }
 
