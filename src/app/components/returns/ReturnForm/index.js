@@ -23,26 +23,32 @@ export default class ReturnForm extends Component {
       toRestock: true,
       noRestockReason: null,
       additionalNotes: null,
+      upc: null,
+      sku: null,
+      description: null,
       touched: {
         trackingNumber: false,
         orderNumber: false
-      }
+      },
+      itemSearch: [],
     };
     this.baseState = this.state;
     this.resetForm = this.resetForm.bind(this);
     this.submitReturn = this.submitReturn.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
+    this.findItem = this.findItem.bind(this);
   }
 
   // Firebase Push data
 
   componentWillMount() {  
-    this.firebaseRef = firebase.database().ref("/returns");
+    this.firebaseReturnsRef = firebase.database().ref("/returns");
+    this.firebaseInventoryRef = firebase.database().ref("/inventory");
   }
 
   componentWillUnmount() {  
-    this.firebaseRef.off();
+    this.firebaseReturnsRef.off();
   };
 
   resetForm = () => {
@@ -56,7 +62,7 @@ export default class ReturnForm extends Component {
     }
     event.preventDefault();
     let timestamp = new Date().getTime();
-    this.firebaseRef.push({
+    this.firebaseReturnsRef.push({
       entryDate: timestamp,
       trackingNumber: this.state.trackingNumber,
       orderNumber: this.state.orderNumber,
@@ -65,7 +71,10 @@ export default class ReturnForm extends Component {
       electronicSerial: this.state.electronicSerial,
       toRestock: this.state.toRestock,
       noRestockReason: this.state.noRestockReason,
-      additionalNotes: this.state.additionalNotes
+      additionalNotes: this.state.additionalNotes,
+      upc: this.state.upc,
+      sku: this.state.sku,
+      description: this.state.description
     });
     this.resetForm();
   };
@@ -78,10 +87,56 @@ export default class ReturnForm extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
+    //look for Item
+    let searchUpc = value;
+    let searchVal = '';
+
+    if (name === 'upc') {
+      let pad = "000000000000";
+      searchVal = pad.substring(0, pad.length - searchUpc.length) + searchUpc;
+      this.findItem(searchVal);
+    } 
+    //end search
+
     this.setState({
       [name]: value
     });
   }
+
+  //find item search on firebase by UPC
+  findItem(searchVal) {
+    this.firebaseInventoryRef.orderByChild('upc').equalTo(searchVal.toUpperCase()).once('value').then(function(dataSnapshot) {
+        var itemsArr = [];
+        console.log(dataSnapshot.val());
+        dataSnapshot.forEach(function(childSnapshot) {
+            itemsArr.push(childSnapshot.val());
+        });
+        return Promise.all(itemsArr);
+    }, function(error) {
+        // The Promise was rejected.
+        console.error(error);
+    }).then(function(value) { 
+        console.log('Results: ', value);
+        if (value.length === 1) {
+          this.setState({
+            sku: value[0].sku,
+            description: value[0].description
+          })
+        } else if (value.length === 0) {
+          this.setState({
+            sku: null,
+            description: null
+          })
+        } 
+        else {
+          this.setState({
+            itemSearch: value
+          })
+        }
+    }.bind(this));
+  }
+
+  //end find item
 
   canBeSubmitted() {
     const tracking = this.state.trackingNumber;
@@ -123,67 +178,125 @@ export default class ReturnForm extends Component {
           </select>
         </div>;
 
+      //When a upc scan returns more than one match
+      //NEED TO ADD SELECTION
+      var itemsNode = this.state.itemSearch.map((item, index) => {
+        return (
+          <div key={index}>
+            <h3>{item.sku}</h3>
+            <p>{item.description}</p>
+            <h2>{item.upc}</h2>
+          </div>
+        );
+      }); 
+
 
     return (
       <div>
          <form onSubmit={this.submitReturn}>
-          <div className="form-group row">
-            <label htmlFor="tracking-number-input" className="col-sm-2 col-form-label">Tracking #</label>
-            <div className="col-sm-4">
-              <input className={shouldMarkError('tracking') ? "error form-control" : "form-control"}
-                onBlur={this.handleBlur('tracking')}
-                placeholder="Tracking #" type="text" name="trackingNumber" 
-                value={this.state.trackingNumber} 
-                onChange={this.handleChange} />
-            </div>
-          </div>
-          <div className="form-group row">
-            <label htmlFor="order-number-input" className="col-sm-2 col-form-label">Order #</label>
-            <div className="col-sm-4">
-              <input className={shouldMarkError('order') ? "error form-control" : "form-control"}
-                onBlur={this.handleBlur('order')}
-                placeholder="Order #" type="text" name="orderNumber" 
-                value={this.state.orderNumber} 
-                onChange={this.handleChange} />
-            </div>
-          </div>
-          <div className="form-group row">
-            <label htmlFor="return-type-select" className="col-sm-2 col-form-label">Return Type</label>
-              <div className="col-sm-3">
-                <select className="form-control" name="returnCode" value={this.state.returnCode} onChange={this.handleChange}>
-                    <option value="RAVR">RAVR</option>
-                    <option value="RADE">RADE</option>
-                    <option value="RAIR">RAIR</option>
-                    <option value="Unknown">Unknown</option>
-                </select>
+            <div className="form-group row">
+              <div className="col-sm-2">
+                <button disabled={!isEnabled}
+                  className={isEnabled ? "btn btn-primary" : "btn btn-danger"}>
+                  Submit Return
+                </button>
               </div>
-          </div>
-          <div className="form-group row">
-            <label htmlFor="electronic-serial-checkbox" className="col-sm-2 col-form-label">Electronic Return</label>
-            <div className="col-sm-1">
-              <input className="form-control" type="checkbox" name="isElectronic" checked={this.state.isElectronic} onChange={this.handleChange} />
+              <div className="col-sm-2">
+                <button className="btn btn-warning" onClick={this.resetForm}>Cancel</button>
+              </div>
             </div>
-            { electronicText }
-          </div>
-          <div className="form-group row">
-            <label htmlFor="return-stock-checkbox" className="col-sm-2 col-form-label">Return to stock</label>
-            <div className="col-sm-1">  
-              <input className="form-control" type="checkbox" name="toRestock" checked={this.state.toRestock} onChange={this.handleChange} />
+            <div className="form-group row">
+              <label htmlFor="tracking-number-input" className="col-sm-2 col-form-label">Tracking #</label>
+              <div className="col-sm-4">
+                <input className={shouldMarkError('tracking') ? "error form-control" : "form-control"}
+                  onBlur={this.handleBlur('tracking')}
+                  placeholder="Tracking #" type="text" name="trackingNumber" 
+                  value={this.state.trackingNumber} 
+                  onChange={this.handleChange} />
+              </div>
             </div>
-            { toRestockText }
-          </div>
-          <div className="form-group row">
-            <div className="col-sm-2">
-              <button disabled={!isEnabled}
-                className={isEnabled ? "btn btn-primary" : "btn btn-danger"}>
-                Submit Return
-              </button>
+            <div className="form-group row">
+              <label htmlFor="order-number-input" className="col-sm-2 col-form-label">Order #</label>
+              <div className="col-sm-4">
+                <input className={shouldMarkError('order') ? "error form-control" : "form-control"}
+                  onBlur={this.handleBlur('order')}
+                  placeholder="Order #" type="text" name="orderNumber" 
+                  value={this.state.orderNumber} 
+                  onChange={this.handleChange} />
+              </div>
             </div>
-            <div className="col-sm-2">
-              <button className="btn btn-warning" onClick={this.resetForm}>Cancel</button>
+            <div className="form-group row">
+              <label htmlFor="return-type-select" className="col-sm-2 col-form-label">Return Type</label>
+                <div className="col-sm-3">
+                  <select className="form-control" name="returnCode" value={this.state.returnCode} onChange={this.handleChange}>
+                      <option value="RAVR">RAVR</option>
+                      <option value="RADE">RADE</option>
+                      <option value="RAIR">RAIR</option>
+                      <option value="Unknown">Unknown</option>
+                  </select>
+                </div>
             </div>
-          </div>
+            <div className="form-group row">
+              <label htmlFor="electronic-serial-checkbox" className="col-sm-2 col-form-label">Electronic Return</label>
+              <div className="col-sm-1">
+                <input className="form-control" type="checkbox" name="isElectronic" checked={this.state.isElectronic} onChange={this.handleChange} />
+              </div>
+              { electronicText }
+            </div>
+            <div className="form-group row">
+              <label htmlFor="return-stock-checkbox" className="col-sm-2 col-form-label">Return to stock</label>
+              <div className="col-sm-1">  
+                <input className="form-control" type="checkbox" name="toRestock" checked={this.state.toRestock} onChange={this.handleChange} />
+              </div>
+              { toRestockText }
+            </div>
+            <div className="form-group row">
+              <label htmlFor="additional-notes-input" className="col-sm-2 col-form-label">Notes</label>
+              <div className="col-sm-8">
+                <input className="form-control" 
+                  placeholder="Notes" type="text" name="additionalNotes" 
+                  value={this.state.additionalNotes} 
+                  onChange={this.handleChange} />
+              </div>
+            </div>
+
+            <div className="form-group row">
+              <label htmlFor="tracking-number-input" className="col-sm-2 col-form-label">Item</label>
+              <div className="col-sm-2">
+                <input className="form-control"
+                  name="upc"
+                  placeholder="Scan UPC..."
+                  value={this.state.upc} 
+                  onChange={this.handleChange} />
+              </div>
+              <div className="col-sm-3">
+                <input className="form-control"
+                  name="sku"
+                  placeholder="SKU..."
+                  value={this.state.sku} 
+                  onChange={this.handleChange} />
+              </div>
+              <div className="col-sm-5">
+                <input className="form-control"
+                  name="description"
+                  placeholder="Description..."
+                  value={this.state.description} 
+                  onChange={this.handleChange} />
+              </div>
+
+            </div>
+
           </form>
+
+          <div>
+            {this.state.itemSearch.length > 0 &&
+              <div>
+                <h2>There are {itemsNode.length} matches</h2>
+                <div>{itemsNode}</div>
+              </div>
+            } 
+          </div>
+          
 
           <div className="row">
             <ReturnInventory />

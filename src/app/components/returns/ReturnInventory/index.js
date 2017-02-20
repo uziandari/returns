@@ -51,11 +51,6 @@ export default class ReturnInventory extends Component {
 
     return (
       <div>
-        <div className="form-group">
-          <form onSubmit={this.submitSearch}>
-          <input className="form-control" placeholder="Search Returns..." type="text" value={this.state.value} onChange={this.handleChange} />
-          </form>
-        </div>
         < ReturnTable items={this.state.items} />
       </div>        
     )
