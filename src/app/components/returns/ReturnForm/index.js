@@ -288,14 +288,7 @@ export default class ReturnForm extends Component {
 
           </form>
 
-          <div>
-            {this.state.itemSearch.length > 0 &&
-              <div>
-                <h2>There are {itemsNode.length} matches</h2>
-                <div>{itemsNode}</div>
-              </div>
-            } 
-          </div>
+          
           
 
           <div className="row">
