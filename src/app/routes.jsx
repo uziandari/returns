@@ -12,7 +12,6 @@ import requireAuth from './utils/authenticated';
 //Return Forms and Table
 import ReturnForm from './components/returns/ReturnForm/index';
 import ReturnInventory from './components/returns/ReturnInventory/index';
-import SingleReturn from './components/returns/ReturnSingle/index';
 
 //Inventory Search and Table
 import InventorySearch from './components/inventory/InventorySearch/index';
@@ -26,9 +25,7 @@ export default (
         <Route path="/reset" component={ResetPassword} />
         <Route path="/profile" component={UserProfile} onEnter={requireAuth} />
         <Route path="/submitreturn" component={ReturnForm} onEnter={requireAuth} />
-        <Route path="/viewreturns" component={ReturnInventory} onEnter={requireAuth}>
-            <Route path="/viewreturns/:id" component={SingleReturn}/>
-        </Route>
+        <Route path="/viewreturns" component={ReturnInventory} onEnter={requireAuth} />
         <Route path="/inventory" component={InventorySearch} onEnter={requireAuth} />
     </Route>
 

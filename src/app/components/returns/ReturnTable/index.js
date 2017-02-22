@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import moment from 'moment';
 
 export default class ReturnTable extends Component {
   constructor(props) {
@@ -9,9 +10,10 @@ export default class ReturnTable extends Component {
   render() {
 
     var itemsNode = this.props.items.map((item, index) => {
+      let entryTime = moment(item.entryDate).format("MM-DD h:mm");
       return (
         <tr key={index}>
-          <td>{item.entryDate}</td>
+          <td>{entryTime}</td>
           <td>{item.returnCode}-{item.orderNumber}</td>
           <td>{item.trackingNumber}</td>
           <td>{item.noRestockReason}</td>

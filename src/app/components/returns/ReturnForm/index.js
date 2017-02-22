@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import firebase from 'firebase';
+import moment from 'moment';
 
 import ReturnInventory from '../ReturnInventory/index';
+import InventoryModal from '../InventoryModal/index';
 import './style.scss'
 
 function validate(tracking, order) {
@@ -31,6 +33,8 @@ export default class ReturnForm extends Component {
         orderNumber: false
       },
       itemSearch: [],
+      selectedItem: null,
+      modalIsOpen: false
     };
     this.baseState = this.state;
     this.resetForm = this.resetForm.bind(this);
@@ -38,6 +42,7 @@ export default class ReturnForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
     this.findItem = this.findItem.bind(this);
+    this.selectFromMultiple = this.selectFromMultiple.bind(this);
   }
 
   // Firebase Push data
@@ -49,6 +54,7 @@ export default class ReturnForm extends Component {
 
   componentWillUnmount() {  
     this.firebaseReturnsRef.off();
+    this.firebaseInventoryRef.off();
   };
 
   resetForm = () => {
@@ -61,7 +67,7 @@ export default class ReturnForm extends Component {
       return;
     }
     event.preventDefault();
-    let timestamp = new Date().getTime();
+    let timestamp = moment().toDate().getTime();
     this.firebaseReturnsRef.push({
       entryDate: timestamp,
       trackingNumber: this.state.trackingNumber,
@@ -78,6 +84,16 @@ export default class ReturnForm extends Component {
     });
     this.resetForm();
   };
+
+  //Modal to select proper item
+
+  closeModal() {
+    this.setState({
+      modalIsOpen: false
+    })
+  }
+
+  //end Modal
 
 
   //END FIREBASE
@@ -107,7 +123,6 @@ export default class ReturnForm extends Component {
   findItem(searchVal) {
     this.firebaseInventoryRef.orderByChild('upc').equalTo(searchVal.toUpperCase()).once('value').then(function(dataSnapshot) {
         var itemsArr = [];
-        console.log(dataSnapshot.val());
         dataSnapshot.forEach(function(childSnapshot) {
             itemsArr.push(childSnapshot.val());
         });
@@ -116,7 +131,6 @@ export default class ReturnForm extends Component {
         // The Promise was rejected.
         console.error(error);
     }).then(function(value) { 
-        console.log('Results: ', value);
         if (value.length === 1) {
           this.setState({
             sku: value[0].sku,
@@ -130,10 +144,16 @@ export default class ReturnForm extends Component {
         } 
         else {
           this.setState({
-            itemSearch: value
+            itemSearch: value,
+            modalIsOpen: true
           })
         }
     }.bind(this));
+  }
+
+  //select single item in case of multiple matches to upc
+  selectFromMultiple(index) {
+    console.log(index)
   }
 
   //end find item
@@ -177,23 +197,18 @@ export default class ReturnForm extends Component {
               <option value="Other">Other</option>
           </select>
         </div>;
-
-      //When a upc scan returns more than one match
-      //NEED TO ADD SELECTION
-      var itemsNode = this.state.itemSearch.map((item, index) => {
-        return (
-          <div key={index}>
-            <h3>{item.sku}</h3>
-            <p>{item.description}</p>
-            <h2>{item.upc}</h2>
-          </div>
-        );
-      }); 
+      const multipleItems = (this.state.itemSearch.length > 1) ?
+            <InventoryModal modalIsOpen={this.state.modalIsOpen}
+                          itemList={this.state.itemSearch} 
+                          onRequestClose={ () => this.closeModal() }
+                          selectFromItems={ () => this.selectFromMultiple() } />
+            : null
 
 
     return (
       <div>
-         <form onSubmit={this.submitReturn}>
+          {multipleItems}
+          <form onSubmit={this.submitReturn}>
             <div className="form-group row">
               <div className="col-sm-2">
                 <button disabled={!isEnabled}
