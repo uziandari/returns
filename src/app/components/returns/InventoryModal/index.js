@@ -6,10 +6,9 @@ export default class InventoryModal extends Component {
     super(props);
   }
 
-  itemSelected(event) {
-    event.preventDefault();
-    console.log(event.target);
-    this.props.selectFromItems();
+  selectItem(index) {
+    this.props.selectFromItems(index);
+    this.props.onRequestClose();
   }
 
    render() {
@@ -17,7 +16,7 @@ export default class InventoryModal extends Component {
     var itemsNode = this.props.itemList.map((item, index) => {
       return (
         <div key={index}>
-          <h3>{item.sku}</h3>
+          <h3 onClick={ () => this.selectItem(index)} >{item.sku}</h3>
         </div>
       );
     }); 
@@ -26,7 +25,7 @@ export default class InventoryModal extends Component {
       <Modal
         isOpen={ this.props.modalIsOpen }
         contentLabel="Select Correct Item"
-        onRequestClose={ () => this.props.onRequestClose() }>
+        onRequestClose={ () => this.props.onRequestClose() } >
         <div>
           <button className="btn btn-default" onClick={() => this.props.onRequestClose()}>close</button>
           {itemsNode}

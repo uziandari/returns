@@ -153,7 +153,11 @@ export default class ReturnForm extends Component {
 
   //select single item in case of multiple matches to upc
   selectFromMultiple(index) {
-    console.log(index)
+    console.log("index is: " + index);
+    this.setState({
+       sku: this.state.itemSearch[index].sku,
+       description: this.state.itemSearch[index].description
+     })
   }
 
   //end find item
@@ -201,7 +205,7 @@ export default class ReturnForm extends Component {
             <InventoryModal modalIsOpen={this.state.modalIsOpen}
                           itemList={this.state.itemSearch} 
                           onRequestClose={ () => this.closeModal() }
-                          selectFromItems={ () => this.selectFromMultiple() } />
+                          selectFromItems={this.selectFromMultiple} />
             : null
 
 
