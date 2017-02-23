@@ -14,10 +14,28 @@ export default class InventoryModal extends Component {
    render() {
 
     var itemsNode = this.props.itemList.map((item, index) => {
+
+      var productImage = 'http://rockbottomimages.com/ProductImages/random/NoImage2.jpg';
+
       return (
-        <div key={index}>
-          <h3 onClick={ () => this.selectItem(index)} >{item.sku}</h3>
-        </div>
+          <div key={index} className="col-xs-12" onClick={ () => this.selectItem(index)}>
+            <div className="card">
+              <div className="card-image">
+                <img src={(item.img_url == "") ? productImage : item.img_url} alt={item.description} />
+              </div>
+              <div className="card-info">
+                <div className="name">
+                  <p><strong>{item.location}</strong> | {item.sku}</p>
+                </div>
+                <hr />
+                <div className="content">
+                  <p>{item.upc}</p>
+                  <p>{item.description}</p>
+                  <p></p>
+                </div>
+              </div>
+            </div>
+          </div>  
       );
     }); 
 

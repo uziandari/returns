@@ -28,6 +28,7 @@ export default class ReturnForm extends Component {
       upc: null,
       sku: null,
       description: null,
+      completed: false,
       touched: {
         trackingNumber: false,
         orderNumber: false
@@ -80,7 +81,8 @@ export default class ReturnForm extends Component {
       additionalNotes: this.state.additionalNotes,
       upc: this.state.upc,
       sku: this.state.sku,
-      description: this.state.description
+      description: this.state.description,
+      completed: this.state.completed
     });
     this.resetForm();
   };
@@ -95,6 +97,7 @@ export default class ReturnForm extends Component {
 
   //end Modal
 
+  //handles updating return complete status
 
   //END FIREBASE
 

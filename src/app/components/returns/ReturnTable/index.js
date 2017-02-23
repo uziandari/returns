@@ -6,6 +6,10 @@ export default class ReturnTable extends Component {
     super(props);
   }
 
+  checkReturn(item) {
+    //this.props.completeReturn(item);
+  }
+
 
   render() {
 
@@ -13,6 +17,7 @@ export default class ReturnTable extends Component {
       let entryTime = moment(item.entryDate).format("MM-DD h:mm");
       return (
         <tr key={index}>
+          <td><input className="form-control" type="checkbox" name="complete" checked={item.completed} onChange={ () => this.checkReturn(item.orderNumber)} /></td>
           <td>{entryTime}</td>
           <td>{item.returnCode}-{item.orderNumber}</td>
           <td>{item.trackingNumber}</td>
@@ -29,6 +34,7 @@ export default class ReturnTable extends Component {
       <table className="table table-condensed table-bordered table-striped">
         <thead>
           <tr>
+            <th>Complete?</th>
             <th>Time</th>
             <th>Order#</th>
             <th>Tracking#</th>

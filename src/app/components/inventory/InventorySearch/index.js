@@ -48,7 +48,7 @@ export default class InventorySearch extends Component {
       searchVal = this.state.value;
     }
 
-    this.firebaseRef.orderByChild(this.state.searchField).equalTo(searchVal.toUpperCase()).once('value').then(function(dataSnapshot) {
+    this.firebaseRef.orderByChild(this.state.searchField).equalTo(searchVal.toUpperCase().trim()).once('value').then(function(dataSnapshot) {
         var itemsArr = [];
         dataSnapshot.forEach(function(childSnapshot) {
             itemsArr.push(childSnapshot.val());
@@ -74,7 +74,7 @@ export default class InventorySearch extends Component {
       <div>
         <div className="form-group row">
           <form onSubmit={this.submitSearch}>
-            <label htmlFor="return-type-select" className="col-sm-2 col-form-label">Search Field: </label>
+            <label htmlFor="return-type-select" className="col-sm-2">Search In: </label>
               <div className="col-sm-2">
                 <select className="form-control" name="searchField" value={this.state.searchField} onChange={this.handleChange}>
                     <option value="upc">UPC</option>

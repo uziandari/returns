@@ -11,8 +11,7 @@ export default class ReturnInventory extends Component {
       value: '',
       results: ''
     };
-    this.submitSearch = this.submitSearch.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.completeReturn = this.completeReturn.bind(this);
   }
 
   componentWillMount() {  
@@ -36,22 +35,20 @@ export default class ReturnInventory extends Component {
     this.firebaseRef.off();
   };
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
+
+//update to reflect completed
+  completeReturn(index) {
+    //this.firebaseRef.orderByChild('orderNumber').equalTo(index).once('value', (dataSnapshot) => {
+    //update firebase     
+ 
+    //})
   }
-
-  submitSearch(event) {
-    
-}
-  
-
-  
 
   render() {
 
     return (
       <div>
-        < ReturnTable items={this.state.items} />
+        < ReturnTable items={this.state.items} completeReturn={this.completeReturn} />
       </div>        
     )
   }
