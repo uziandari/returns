@@ -11,7 +11,6 @@ export default class ReturnInventory extends Component {
       value: '',
       results: ''
     };
-    this.completeReturn = this.completeReturn.bind(this);
   }
 
   componentWillMount() {  
@@ -35,20 +34,11 @@ export default class ReturnInventory extends Component {
     this.firebaseRef.off();
   };
 
-
-//update to reflect completed
-  completeReturn(index) {
-    //this.firebaseRef.orderByChild('orderNumber').equalTo(index).once('value', (dataSnapshot) => {
-    //update firebase     
- 
-    //})
-  }
-
   render() {
 
     return (
       <div>
-        < ReturnTable items={this.state.items} completeReturn={this.completeReturn} />
+        < ReturnTable items={this.state.items} />
       </div>        
     )
   }

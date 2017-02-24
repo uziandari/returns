@@ -28,7 +28,6 @@ export default class ReturnForm extends Component {
       upc: null,
       sku: null,
       description: null,
-      completed: false,
       touched: {
         trackingNumber: false,
         orderNumber: false
@@ -82,7 +81,6 @@ export default class ReturnForm extends Component {
       upc: this.state.upc,
       sku: this.state.sku,
       description: this.state.description,
-      completed: this.state.completed
     });
     this.resetForm();
   };

@@ -48,7 +48,7 @@ export default class InventorySearch extends Component {
       searchVal = this.state.value;
     }
 
-    this.firebaseRef.orderByChild(this.state.searchField).equalTo(searchVal.toUpperCase().trim()).once('value').then(function(dataSnapshot) {
+    this.firebaseRef.orderByChild(this.state.searchField).equalTo(searchVal.toUpperCase().trim()).limitToFirst(40).once('value').then(function(dataSnapshot) {
         var itemsArr = [];
         dataSnapshot.forEach(function(childSnapshot) {
             itemsArr.push(childSnapshot.val());
